@@ -19,7 +19,7 @@ def open_and_read_file(file_path):
     return text
 
 
-def make_chains(text_string):
+def make_chains(text_string, n):
     """Take input text as string; return dictionary of Markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -47,8 +47,6 @@ def make_chains(text_string):
     chains = {}
 
     words = text_string.split()
-
-
     # for i in range(len(words) - 2):
     #     key = (words[i], words[i+1])
     #     if key not in chains:
@@ -62,9 +60,22 @@ def make_chains(text_string):
 
     # try using D.setdefault(K, [default])
 
-    for i in range(len(words) - 2):
-        key = (words[i], words[i+1])
-        chains.setdefault(key, []).append(words[i+2])
+    # for i in range(len(words) - 2):
+
+
+    #     key = (words[i], words[i+1])
+    #     chains.setdefault(key, []).append(words[i+2])
+
+    # return chains
+    for i in range(len(words) - n):
+        key = []
+
+        for j in range(i, i + n):
+
+            key.append(words[j])
+
+        t_key = tuple(key)
+        chains.setdefault(t_key, []).append(words[i + n])
 
     return chains
 
@@ -86,11 +97,11 @@ def make_text(chains):
     third_word = choice(chains[start_link])
 
     words.append(third_word)
-    blob = True
-    while blob:
+
+    while True:
         last_two_words = (words[-2], words[-1])
         if last_two_words not in chains:
-            blob = False
+            break
 
         words.append(choice(chains[last_two_words]))
 
@@ -104,7 +115,8 @@ input_text = open_and_read_file(input_path)
 # print input_text
 
 # Get a Markov chain
-chains = make_chains(input_text)
+chains = make_chains(input_text, 4)
+print chains
 
 # Produce random text
 random_text = make_text(chains)
